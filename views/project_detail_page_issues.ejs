@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+  crossorigin="anonymous">
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<link rel='stylesheet' href='/stylesheets/project_detail_page.css' />
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <link rel="icon" href="../../../../favicon.ico">
+
+  <title>Issues Detail Page</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="../../../../dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  <link href="dashboard.css" rel="stylesheet">
+</head>
+
+<body>
+  <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
+    <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Project Management System</a>
+    <!-- <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search"> -->
+    <ul class="navbar-nav px-3">
+      <li class="nav-item text-nowrap">
+        <a class="btn btn-outline-success my-2 my-sm-0" href="/" role="button">Sign Out</a>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="container-fluid">
+    <div class="row">
+      <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+        <div class="sidebar-sticky">
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a class="nav-link" href="/projects">
+                <span data-feather="chevrons-right"></span>
+                Projects Page
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/profil">
+                <span data-feather="chevrons-right"></span>
+                Profil Page
+              </a>
+            </li>
+            <hr class="my-2 bg-dark">
+            <li class="nav-item">
+              <a class="nav-link" href="project_detail_page_overview">
+                <span data-feather="home"></span>
+                Overview <span class="sr-only">(current)</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="project_detail_page_activity">
+                <span data-feather="file"></span>
+                Activity
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/member">
+                <span data-feather="users"></span>
+                Member
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="project_detail_page_issues">
+                <span data-feather="help-circle"></span>
+                Issues
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <!-- NAVBAR -->
+      <!-- ============================================================= -->
+
+      <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+          <h1 class="h2"><strong>New Issues</strong></h1>
+          <div class="btn-toolbar mb-2 mb-md-0">
+            <div class="btn-group mr-2">
+              <button class="btn btn-sm btn-outline-secondary">Share</button>
+              <button class="btn btn-sm btn-outline-secondary">Export</button>
+            </div>
+            <button class="btn btn-sm btn-outline-secondary dropdown-toggle">
+              <span data-feather="calendar"></span>
+              This week
+            </button>
+          </div>
+        </div>
+
+        <!-- CONTENT -->
+        <div class="card">
+          <div class="card-body">
+            <form action="" method="GET">
+              <fieldset class="form-group">
+                <div class="row">
+                  <legend class="col-form-label col-sm-2 pt-0">Tracker</legend>
+                  <div class="col-sm-10">
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="option1"
+                        checked>
+                      <label class="form-check-label" for="gridRadios1">
+                        Bug
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="option2">
+                      <label class="form-check-label" for="gridRadios2">
+                        Feature
+                      </label>
+                    </div>
+                    <div class="form-check disabled">
+                      <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios3" value="option3">
+                      <label class="form-check-label" for="gridRadios3">
+                        Supports
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <div class="form-group row">
+                <label for="from1" class="col-sm-2 col-form-label">Subject</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" id="" placeholder="Subject">
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label for="from1" class="col-sm-2 col-form-label">Description</label>
+                <div class="col-sm-10">
+                  <textarea type="text-area" class="form-control" id="" placeholder="Description"></textarea>
+                </div>
+              </div>
+
+              <fieldset class="form-group">
+                <div class="row">
+                  <legend class="col-form-label col-sm-2 pt-0">Status</legend>
+                  <div class="col-sm-10">
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="option1"
+                        checked>
+                      <label class="form-check-label" for="gridRadios1">
+                        New
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="option2">
+                      <label class="form-check-label" for="gridRadios2">
+                        In Progress
+                      </label>
+                    </div>
+                    <div class="form-check disabled">
+                      <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios3" value="option3">
+                      <label class="form-check-label" for="gridRadios3">
+                        Resolved
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="option2">
+                      <label class="form-check-label" for="gridRadios2">
+                        Feedback
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="option2">
+                      <label class="form-check-label" for="gridRadios2">
+                        Closed
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="option2">
+                      <label class="form-check-label" for="gridRadios2">
+                        Rejected
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <fieldset class="form-group">
+                <div class="row">
+                  <legend class="col-form-label col-sm-2 pt-0">Priority</legend>
+                  <div class="col-sm-10">
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="option1"
+                        checked>
+                      <label class="form-check-label" for="gridRadios1">
+                        Normal
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="option2">
+                      <label class="form-check-label" for="gridRadios2">
+                        High
+                      </label>
+                    </div>
+                    <div class="form-check disabled">
+                      <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios3" value="option3">
+                      <label class="form-check-label" for="gridRadios3">
+                        Urgent
+                      </label>
+                    </div>
+                    <div class="form-check disabled">
+                      <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios3" value="option3">
+                      <label class="form-check-label" for="gridRadios3">
+                        Immediate
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <div class="form-group row">
+                <label class="col-2 col-form-label"> Assignee</label>
+                <div class="col-10">
+                  <select class="custom-select">
+                    <option selected>Choose the boolean ...</option>
+                    <option value="1">True</option>
+                    <option value="2">False</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label for="from1" class="col-sm-2 col-form-label">Start Date</label>
+                <div class="col-sm-10">
+                  <input type="date" class="form-control" id="" placeholder="Start Date">
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label for="from1" class="col-sm-2 col-form-label">Start Date</label>
+                <div class="col-sm-10">
+                  <input type="date" class="form-control" id="" placeholder="Due Date">
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label for="from1" class="col-sm-2 col-form-label">Estimated Time</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" id="" placeholder="Due Date">
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label class="col-2 col-form-label">% done</label>
+                <div class="col-10">
+                  <select class="custom-select">
+                    <option selected>0</option>
+                    <option value="1">20</option>
+                    <option value="2">40</option>
+                    <option value="2">60</option>
+                    <option value="2">80</option>
+                    <option value="2">100</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label for="from1" class="col-sm-2 col-form-label">Files</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" id="" placeholder="">
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary">Save</button>
+            </form>
+
+            <!-- Bootstrap core JavaScript
+            ================================================== -->
+            <!-- Placed at the end of the document so the pages load faster -->
+            <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+              crossorigin="anonymous"></script>
+            <script>window.jQuery || document.write('<script src="../../../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
+            <script src="../../../../assets/js/vendor/popper.min.js"></script>
+            <script src="../../../../dist/js/bootstrap.min.js"></script>
+
+            <!-- Icons -->
+            <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
+            <script>
+              feather.replace()
+            </script>
+
+            <!-- Graphs -->
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+            <script>
+              var ctx = document.getElementById("myChart");
+              var myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                  labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+                  datasets: [{
+                    data: [15339, 21345, 18483, 24003, 23489, 24092, 12034],
+                    lineTension: 0,
+                    backgroundColor: 'transparent',
+                    borderColor: '#007bff',
+                    borderWidth: 4,
+                    pointBackgroundColor: '#007bff'
+                  }]
+                },
+                options: {
+                  scales: {
+                    yAxes: [{
+                      ticks: {
+                        beginAtZero: false
+                      }
+                    }]
+                  },
+                  legend: {
+                    display: false,
+                  }
+                }
+              });
+            </script>
+</body>
+
+</html>
