@@ -7,10 +7,10 @@ var helpers = require('../helpers/util');
 module.exports = function (pool) {
 
     router.get('/', helpers.loggedIn, function (req, res, next) {
-        console.log(req.url);
+        //console.log(req.url);
         const url = req.query.page ? req.url : '/?page=1';
         const page = req.query.page || 1;
-        const limit = 3;
+        const limit = 5;
         const offset = (page - 1) * limit
         let searching = false;
         let params = [];
@@ -40,7 +40,7 @@ module.exports = function (pool) {
         }
 
         sql += `) as project_member`;
-        console.log('count query', sql);
+        //console.log('count query', sql);
 
         pool.query(sql, (err, data) => {
             const totalPages = data.rows[0].total;
@@ -66,7 +66,7 @@ module.exports = function (pool) {
             }
 
             subquery += ` ORDER BY projectid LIMIT ${limit} OFFSET ${offset}`
-            console.log("project list", subquery);
+            //console.log("project list", subquery);
 
             // mendapatkan data member berdasarkan project
             let sqlMembers = `SELECT projects.projectid, CONCAT (users.firstname,' ',users.lastname) AS fullname
@@ -75,7 +75,7 @@ module.exports = function (pool) {
                     INNER JOIN users ON users.userid = members.userid 
                     WHERE projects.projectid IN
                 (${subquery})`;
-            console.log("load members", sqlMembers);
+            //console.log("load members", sqlMembers);
             pool.query(sql, (err, projectData) => {
                 pool.query(sqlMembers, (err, memberData) => {
                     projectData.rows.map(project => {
@@ -83,7 +83,7 @@ module.exports = function (pool) {
                             return member.projectid == project.projectid
                         }).map(item => item.fullname)
                     })
-                    console.log("data jadi", projectData.rows);
+                    //console.log("data jadi", projectData.rows);
                     // ambil semua data dari users untuk select filter member
                     pool.query(`select CONCAT(firstname,' ',lastname) AS fullname from users`, (err, usersData) => {
                         // opsi checkbox untuk menampilkan colom di table
@@ -131,8 +131,7 @@ module.exports = function (pool) {
         }
         let sql = `UPDATE users SET option = option::jsonb || '{"option1" : ${option1}, "option2" : ${option2}, "option3" : ${option3}}' WHERE userid = ${req.session.user}`
         pool.query(sql, (err) => {
-            console.log(sql);
-
+            //console.log(sql);
             if (err) {
                 console.log(err);
             }
@@ -150,7 +149,7 @@ module.exports = function (pool) {
     });
 
     router.post('/add', function (req, res, next) {
-        console.log(req.body);
+        //console.log(req.body);
         pool.query(`insert into projects (projectname) values ('${req.body.projectName}')`, (err) => {
             if (err) return res.send(err)
             if (req.body.users) {
@@ -193,7 +192,7 @@ module.exports = function (pool) {
             if (err) return res.send(err)
             pool.query(`SELECT userid FROM members where projectid = ${id}`, (err, memberData) => {
                 if (err) return res.send(err)
-                pool.query('select userid, firstname, lastname from users ORDER BY userid', (err, userData) => {
+                pool.query('select userid, firstname, lastname, position from users ORDER BY userid', (err, userData) => {
                     if (err) return res.send(err)
                     res.render('projects/edit', {
                         project: projectData.rows[0],
@@ -206,13 +205,41 @@ module.exports = function (pool) {
     });
 
     router.post('/edit/:id', (req, res, next) => {
+
         let id = req.params.id;
-        let projectname = req.query.projectName;
-        let member = req.query.users;
-        pool.query(`UPDATE projects set projectname="${projectName}", member=${users}`)
+        let projectname = req.body.projectName;
+
+        pool.query(`UPDATE projects set projectname='${projectname}' where projectid = ${id}`, (err) => {
+            if (err) return res.send(err)
+            pool.query(`DELETE FROM members where projectid =${id}`, (err) => {
+                if (err) return res.send(err)
+                if (req.body.users) {
+                    if (Array.isArray(req.body.users)) {
+                        let values = [];
+                        req.body.users.forEach((item) => {
+                            values.push(`(${id}, ${item.split("#")[0]}, '${item.split("#")[1]}')`);
+                        })
+                        let sqlMembers = `insert into members (projectid, userid, role) values `
+                        sqlMembers += values.join(', ')
+                        //console.log("query buat masukin members", sqlMembers);
+                        pool.query(sqlMembers, (err) => {
+                            if (err) return res.send(err)
+                            res.redirect('/projects');
+                        });
+                    } else {
+                        pool.query(`insert into members (projectid, userid, role) values (${id}, ${req.body.users.split("#")[0]}, '${req.body.users.split("#")[1]}')`, (err) => {
+                            if (err) return res.send(err)
+                            res.redirect('/projects');
+                        });
+                    }
+                } else {
+                    res.redirect('/projects');
+                }
+            })
+        })
     })
 
-    // ================================ ADD ================================ //
+    // ================================ DELETE ================================ //
     router.get('/delete/:id', function (req, res, next) {
         let id = req.params.id;
         pool.query(`DELETE FROM members where projectid = ${id}`, (err) => {
