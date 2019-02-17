@@ -5,8 +5,7 @@ var helpers = require('../helpers/util');
 module.exports = function (pool) {
 
     router.get('/', helpers.loggedIn, function (req, res, next) {
-        console.log('terkoneksi');
-
+        //console.log('terkoneksi');
         pool.query(`SELECT * from users where userid = ${req.session.user}`, (err, data) => {
             //console.log(data.rows);
             if (err) {
@@ -17,13 +16,14 @@ module.exports = function (pool) {
     })
 
     router.post('/update', (req, res, next) => {
-        let password = req.body.formpass;
+        //console.log(req.body);
+        
+        let password = req.body.formpass;user
         let position = req.body.position;
 
-        let sql = `UPDATE users SET password = '${password}', position = '${req.body.position}', type = ${(req.body.type ? true : false)} where userid = ${req.session.usergoogle}`
+        let sql = `UPDATE users SET password = '${password}', position = '${position}', type = ${(req.body.type ? true : false)} where userid = ${req.session.user}`
         pool.query(sql, (err) => {
-            console.log(sql);
-
+            //console.log(sql);
             if (err) {
                 console.log(err);
             }

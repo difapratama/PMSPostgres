@@ -40,7 +40,7 @@ module.exports = function (pool) {
         }
 
         sql += `) as project_member`;
-        //console.log('count query', sql);
+        console.log('count query', sql);
 
         pool.query(sql, (err, data) => {
             const totalPages = data.rows[0].total;
@@ -75,7 +75,7 @@ module.exports = function (pool) {
                     INNER JOIN users ON users.userid = members.userid 
                     WHERE projects.projectid IN
                 (${subquery})`;
-            //console.log("load members", sqlMembers);
+            console.log("load members", sqlMembers);
             pool.query(sql, (err, projectData) => {
                 pool.query(sqlMembers, (err, memberData) => {
                     projectData.rows.map(project => {
@@ -251,5 +251,105 @@ module.exports = function (pool) {
             });
         });
     });
+    // ================================ OVERVIEW ================================ //
+    router.get('/:id/overview', function (req, res, next) {
+        // pool.query(`SELECT CONCAT  (firstname, ' ', lastname) AS "fullname" FROM users;`)
+        res.render('projects/project_detail_page_overview')
+    })
+
+    // ================================ MEMBER ================================ //
+    router.get('/:id/member', helpers.loggedIn, function (req, res, next) {
+        const url = req.query.page ? req.url : '/?page=1';
+        const page = req.query.page || 1;
+        const limit = 5;
+        const offset = (page - 1) * limit
+        let searching = false;
+        let params = [];
+
+        if (req.query.checkid && req.query.formid) {
+            params.push(`projects.projectid = ${req.query.formid}`);
+            searching = true;
+        }
+
+        if (req.query.checkname && req.query.formname) {
+            params.push(`projects.projectname ilike '%${req.query.formname}%'`);
+            searching = true;
+        }
+
+        if (req.query.checkmember && req.query.member) {
+            params.push(`CONCAT(users.firstname,' ',users.lastname) = '${req.query.member}'`);
+            searching = true;
+        }
+
+        // untuk menghitung jumlah data
+        let sql = `select count(id) as total from (select distinct projects.projectid as id from projects
+                LEFT JOIN members ON projects.projectid = members.projectid
+                LEFT JOIN users ON members.userid = users.userid`
+
+        if (searching) {
+            sql += ` where ${params.join(' AND ')}`
+        }
+
+        sql += `) as project_member`;
+        console.log('count query', sql);
+
+        pool.query(sql, (err, data) => {
+            let id = req.params.id;
+            const totalPages = data.rows[0].total;
+            const pages = Math.ceil(totalPages / limit)
+
+            //untuk menampilkan data dari project
+            sql = `select distinct projects.projectid, projects.projectname from projects
+                LEFT JOIN members ON projects.projectid = members.projectid
+                LEFT JOIN users ON members.userid = users.userid`
+
+            if (searching) {
+
+                sql += ` where ${params.join(' AND ')}`
+            }
+
+            sql += ` ORDER BY projects.projectid LIMIT ${limit} OFFSET ${offset}`
+
+            // untuk membatasi query members berdasarkan project yang akan diolah saja
+            let subquery = `select distinct projects.projectid from projects LEFT JOIN members ON projects.projectid = members.projectid
+            LEFT JOIN users ON members.userid = users.userid`
+            if (searching) {
+                subquery += ` where ${params.join(' AND ')}`
+            }
+
+            subquery += ` ORDER BY projectid LIMIT ${limit} OFFSET ${offset}`
+            //console.log("project list", subquery);
+
+            // mendapatkan data member berdasarkan project
+            let sqlMembers = `SELECT members.id, members.role, users.firstname
+            FROM members
+            INNER JOIN projects ON members.projectid = projects.projectid
+            INNER JOIN users ON members.userid = users.userid
+            WHERE projects.projectid = 33`;
+            console.log("load members", sqlMembers);
+
+            pool.query(sqlMembers, (err, memberData) => {
+console.log(memberData);
+
+
+                res.render('projects/project_detail_page_members', {
+                    data: memberData.rows,
+                    // users: usersData.rows,
+                    pagination: {
+                        pages,
+                        page,
+                        totalPages,
+                        url
+                    },
+                    query: req.query,
+                    // columnOne,
+                    // columnTwo,
+                    // columnThree
+                })
+            })
+
+        })
+    })
+
     return router;
 }

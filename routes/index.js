@@ -24,7 +24,7 @@ module.exports = function (pool) {
         req.flash('loginMessage', 'Email atau Password Salah');
         res.redirect("/");
       } else {
-        
+
         req.session.user = data.rows[0].userid;
         res.redirect("/projects");
       }
@@ -48,26 +48,6 @@ module.exports = function (pool) {
     })
   })
 
-  // router.get('/member', function (req, res, next) {
-  //   res.render('member');
-  // });
-
-  // router.get('/profil', function (req, res, next) {
-  //   res.render('profil');
-  // });
-
-  // router.get('/edit', function (req, res, next) {
-  //   res.render('edit');
-  // });
-
-  // router.get('/project_detail_page', function (req, res, next) {
-  //   res.render('project_detail_page');
-  // });
-
-  // router.get('/project_detail_page_project', function (req, res, next) {
-  //   res.render('project_detail_page_project');
-  // });
-
   router.get('/project_detail_page_members', function (req, res, next) {
     res.render('project_detail_page_members');
   });
@@ -76,20 +56,8 @@ module.exports = function (pool) {
     res.render('project_detail_page_overview');
   });
 
-  // router.get('/project_detail_page_activity', function (req, res, next) {
-  //   res.render('project_detail_page_activity');
-  // });
-
   router.get('/project_detail_page_issues', function (req, res, next) {
     res.render('project_detail_page_issues');
   });
-
-  // router.get('/logout', function (req, res, next) {
-  //   req.session.destroy(function (err) {
-  //     res.redirect("/")
-  //   })
-  // })
-
   return router;
-
 };

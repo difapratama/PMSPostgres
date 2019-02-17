@@ -100,7 +100,7 @@
             <% data.forEach((item) => { %>
             <tr>
                 <th scope="row" class="<%= columnOne ? '' : 'd-none' %>">
-                    <a href="/project_detail_page_overview/<%= item.projectid %>">
+                    <a href="/projects/<%= item.projectid %>/overview">
                         <%= item.projectid %></a>
                 </th>
                 <td class="<%= columnTwo ? '' : 'd-none' %>">
