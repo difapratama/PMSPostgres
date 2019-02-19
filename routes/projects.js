@@ -130,7 +130,7 @@ module.exports = function (pool) {
             option3 = true;
         }
         let sql = `UPDATE users SET option = option::jsonb || '{"option1" : ${option1}, "option2" : ${option2}, "option3" : ${option3}}' WHERE userid = ${req.session.user}`
-        console.log(sql);
+        //console.log(sql);
 
         pool.query(sql, (err) => {
             if (err) {
@@ -166,7 +166,7 @@ module.exports = function (pool) {
                         })
                         let sqlMembers = `insert into members (projectid, userid, role) values `
                         sqlMembers += values.join(', ')
-                        console.log("query buat masukin members", sqlMembers);
+                        //console.log("query buat masukin members", sqlMembers);
                         pool.query(sqlMembers, (err) => {
                             if (err) return res.send(err)
                             res.redirect('/projects');
@@ -247,7 +247,7 @@ module.exports = function (pool) {
             if (err) return res.send(err)
             pool.query(`DELETE FROM projects where projectid = ${id}`, (err) => {
                 if (err) return res.send(err)
-                console.log(`data berhasil di delete`);
+                //console.log(`data berhasil di delete`);
                 res.redirect('/projects');
             });
         });
@@ -276,23 +276,23 @@ module.exports = function (pool) {
         let id = req.params.id;
         const url = req.query.page ? req.url : `/${id}/member/?page=1`;
         const page = req.query.page || 1;
-        const limit = 2;
+        const limit = 4;
         const offset = (page - 1) * limit
         let searching = false;
         let params = [];
 
-        if (req.query.checkid && req.query.formid) {
-            params.push(`projects.projectid = ${req.query.formid}`);
+        if (req.query.checkid && req.query.filterid) {
+            params.push(`projects.projectid = ${req.query.filterid}`);
             searching = true;
         }
 
-        if (req.query.checkname && req.query.formname) {
-            params.push(`projects.projectname ilike '%${req.query.formname}%'`);
+        if (req.query.checkname && req.query.filtername) {
+            params.push(`CONCAT(users.firstname,' ',users.lastname) ilike '%${req.query.filtername}%'`);
             searching = true;
         }
 
-        if (req.query.checkposition && req.query.member) {
-            params.push(`CONCAT(users.firstname,' ',users.lastname) = '${req.query.member}'`);
+        if (req.query.checkposition && req.query.filterposition) {
+            params.push(`users.position ilike '%${req.query.filterposition}%'`);
             searching = true;
         }
 
@@ -303,9 +303,6 @@ module.exports = function (pool) {
         INNER JOIN users ON members.userid = users.userid
         WHERE projects.projectid = ${req.params.id}`
 
-        console.log(sql);
-        
-
         if (searching) {
             sql += ` where ${params.join(' AND ')}`
         }
@@ -314,9 +311,6 @@ module.exports = function (pool) {
         //console.log('count query', sql);
 
         pool.query(sql, (err, data) => {
-
-            console.log(data);
-            
 
             const totalPages = data.rows[0].total;
             const pages = Math.ceil(totalPages / limit)
@@ -344,27 +338,21 @@ module.exports = function (pool) {
             //console.log("project list", subquery);
 
             // mendapatkan data member berdasarkan project
-            let sqlMembers = `SELECT members.id, members.role, users.firstname
+            let sqlMembers = `SELECT members.id, members.role, users.firstname, users.userid
             FROM members
             INNER JOIN projects ON members.projectid = projects.projectid
             INNER JOIN users ON members.userid = users.userid
             WHERE projects.projectid = ${req.params.id} LIMIT ${limit} OFFSET ${offset}`;
 
-            console.log("load members", sqlMembers);
-
             pool.query(sqlMembers, (err, memberData) => {
 
                 pool.query(`SELECT optiondetail -> 'option1' AS o1, optiondetail -> 'option2' AS o2, optiondetail -> 'option3' AS o3 FROM users where userid = ${req.session.user}`, (err, opsi) => {
-
-
-                    //console.log('wkwkwkwkwk', opsi);
 
                     let columnOne = opsi.rows[0].o1;
                     let columnTwo = opsi.rows[0].o2;
                     let columnThree = opsi.rows[0].o3;
                     console.log(columnOne, columnTwo, columnThree);
                     //console.log(memberData.rows);
-
 
                     res.render('projects/project_detail_page_members', {
                         data: memberData.rows,
@@ -403,13 +391,66 @@ module.exports = function (pool) {
             option3 = true;
         }
         let sql = `UPDATE users SET optiondetail = optiondetail::jsonb || '{"option1" : ${option1}, "option2" : ${option2}, "option3" : ${option3}}' WHERE userid = ${req.session.user}`
-        //console.log(sql);
 
         pool.query(sql, (err) => {
             if (err) {
                 console.log(err);
             }
             res.redirect(`/projects/${req.params.id}/member`)
+        })
+    })
+
+    //  ================================ MEMBER EDIT ================================ //
+
+    router.get('/:projectid/member/edit/:id', function (req, res, next) {
+        let projectid = req.params.projectid;
+        let userid = req.params.id;
+        pool.query(`SELECT * FROM projects where projectid = ${projectid}`, (err, projectData) => {
+            console.log('wkwkwkwkwk', projectData);
+            
+            if (err) return res.send(err)
+            pool.query(`select firstname, position from users where userid = ${userid}`, (err, userData) => {
+                if (err) return res.send(err)
+                res.render('projects/editRoleMember', {
+                    project: projectData.rows[0],
+                    users: userData.rows[0]
+                })
+            })
+        })
+    });
+
+    router.post('/edit/:id', (req, res, next) => {
+
+        let id = req.params.id;
+        let projectname = req.body.projectName;
+
+        pool.query(`UPDATE projects set projectname='${projectname}' where projectid = ${id}`, (err) => {
+            if (err) return res.send(err)
+            pool.query(`DELETE FROM members where projectid =${id}`, (err) => {
+                if (err) return res.send(err)
+                if (req.body.users) {
+                    if (Array.isArray(req.body.users)) {
+                        let values = [];
+                        req.body.users.forEach((item) => {
+                            values.push(`(${id}, ${item.split("#")[0]}, '${item.split("#")[1]}')`);
+                        })
+                        let sqlMembers = `insert into members (projectid, userid, role) values `
+                        sqlMembers += values.join(', ')
+                        //console.log("query buat masukin members", sqlMembers);
+                        pool.query(sqlMembers, (err) => {
+                            if (err) return res.send(err)
+                            res.redirect('/projects');
+                        });
+                    } else {
+                        pool.query(`insert into members (projectid, userid, role) values (${id}, ${req.body.users.split("#")[0]}, '${req.body.users.split("#")[1]}')`, (err) => {
+                            if (err) return res.send(err)
+                            res.redirect('/projects');
+                        });
+                    }
+                } else {
+                    res.redirect('/projects');
+                }
+            })
         })
     })
     return router;

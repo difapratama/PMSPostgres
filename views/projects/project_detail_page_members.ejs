@@ -112,11 +112,11 @@
             </div>
             <div class="form-group row">
               <label class="col-2 col-form-label">
-                <input class="form-check-input" type="checkbox" name="filtername" value="true" <%= query.checkname
+                <input class="form-check-input" type="checkbox" name="checkname" value="true" <%= query.checkname
                 ? ' checked' : '' ; %>>Name
               </label>
               <div class="col-10">
-                <input class="form-control" type="text" placeholder="Name" id="example-text-input" name="formname"
+                <input class="form-control" type="text" placeholder="Name" id="example-text-input" name="filtername"
                   value="<%= query.formname %>">
               </div>
             </div>
@@ -126,8 +126,9 @@
                 ? ' checked' : '' ; %>>Position
               </label>
               <div class="col-10">
-                <select class="custom-select" name="boolean">
+                <select class="custom-select" name="filterposition">
                   <option value="">Choose the position ...</option>
+                  
                   <option value=false>Manager</option>
                   <option value=false>Software Developer</option>
                   <option value=false>Quality Assurance</option>
@@ -209,7 +210,7 @@
                 <td class="<%= columnThree ? '' : 'd-none' %>">
                   <%= item.role %> </td>
                 <td class="Actions">
-                  <a href="" button type="submit" class="btn btn-primary">Edit</button>
+                  <a href="/projects/<%- projectid %>/member/edit/<%= item.userid %>" button type="submit" class="btn btn-primary">Edit</button>
                     <a href="" class="btn btn-danger" style="margin:5px;">Delete</a>
                 </td>
               </tr>
