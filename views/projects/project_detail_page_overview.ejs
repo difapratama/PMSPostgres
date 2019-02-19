@@ -109,11 +109,11 @@
         <div class="card">
           <div class="card-body">
             <strong>Members</strong>
+
             <ul>
-              
-              <li>Rubi Henjaya</li>
-              <li></li>
-              
+              <% for (i = 0; i < members.length; i++) { %>
+              <li><%= members[i].fullname %></li>
+              <% } %>
             </ul>
           </div>
         </div>

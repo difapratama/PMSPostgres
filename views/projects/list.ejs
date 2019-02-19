@@ -36,8 +36,11 @@
                 <select class="custom-select" name="member">
                     <option value="">Choose the member ...</option>
                     <% users.forEach((item) => { %>
-                    <option <%=query.member==item.fullname ? ' selected' : '' ; %> </option> <%= `${item.fullname}` %>
-                        </option> <% }); %> </select> </div> </div> <div><br></div>
+                    <option <%= query.member == item.fullname ? ' selected' : '' ; %></option>
+                    <%= `${item.fullname}` %></option> <% }); %> 
+                </select> </div> </div> <div>
+                        <br>
+            </div>
             <button type="submit" class="btn btn-primary">Search</button>
             <a href="/projects" class="btn btn-warning">Reset</a>
             <hr class="my-2">
@@ -89,13 +92,13 @@
     <table class="table">
         <thead class="thead-light">
             <tr>
-
                 <th scope="col" class="<%= columnOne ? '' : 'd-none' %>">ID</th>
                 <th scope="col" class="<%= columnTwo ? '' : 'd-none' %>">Nama Project</th>
                 <th scope="col" class="<%= columnThree ? '' : 'd-none' %>">Members</th>
                 <th scope="col">Actions</th>
             </tr>
         </thead>
+
         <tbody>
             <% data.forEach((item) => { %>
             <tr>

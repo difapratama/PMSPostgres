@@ -18,7 +18,7 @@ module.exports = function (pool) {
     router.post('/update', (req, res, next) => {
         //console.log(req.body);
         
-        let password = req.body.formpass;user
+        let password = req.body.formpass;
         let position = req.body.position;
 
         let sql = `UPDATE users SET password = '${password}', position = '${position}', type = ${(req.body.type ? true : false)} where userid = ${req.session.user}`

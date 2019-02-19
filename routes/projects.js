@@ -40,7 +40,7 @@ module.exports = function (pool) {
         }
 
         sql += `) as project_member`;
-        console.log('count query', sql);
+        //console.log('count query', sql);
 
         pool.query(sql, (err, data) => {
             const totalPages = data.rows[0].total;
@@ -52,7 +52,6 @@ module.exports = function (pool) {
                 LEFT JOIN users ON members.userid = users.userid`
 
             if (searching) {
-
                 sql += ` where ${params.join(' AND ')}`
             }
 
@@ -75,7 +74,7 @@ module.exports = function (pool) {
                     INNER JOIN users ON users.userid = members.userid 
                     WHERE projects.projectid IN
                 (${subquery})`;
-            console.log("load members", sqlMembers);
+            //console.log("load members", sqlMembers);
             pool.query(sql, (err, projectData) => {
                 pool.query(sqlMembers, (err, memberData) => {
                     projectData.rows.map(project => {
@@ -88,6 +87,7 @@ module.exports = function (pool) {
                     pool.query(`select CONCAT(firstname,' ',lastname) AS fullname from users`, (err, usersData) => {
                         // opsi checkbox untuk menampilkan colom di table
                         pool.query(`SELECT option -> 'option1' AS o1, option -> 'option2' AS o2, option -> 'option3' AS o3 FROM users where userid=${req.session.user}`, (err, data) => {
+
                             let columnOne = data.rows[0].o1;
                             let columnTwo = data.rows[0].o2;
                             let columnThree = data.rows[0].o3;
@@ -130,8 +130,9 @@ module.exports = function (pool) {
             option3 = true;
         }
         let sql = `UPDATE users SET option = option::jsonb || '{"option1" : ${option1}, "option2" : ${option2}, "option3" : ${option3}}' WHERE userid = ${req.session.user}`
+        console.log(sql);
+
         pool.query(sql, (err) => {
-            //console.log(sql);
             if (err) {
                 console.log(err);
             }
@@ -253,15 +254,29 @@ module.exports = function (pool) {
     });
     // ================================ OVERVIEW ================================ //
     router.get('/:id/overview', function (req, res, next) {
-        // pool.query(`SELECT CONCAT  (firstname, ' ', lastname) AS "fullname" FROM users;`)
-        res.render('projects/project_detail_page_overview')
+
+        let id = req.params.id;
+        let sqlMembers = `SELECT CONCAT (firstname, ' ', lastname) AS "fullname" FROM users where userid IN (SELECT userid FROM members WHERE projectid = ${id})`
+
+        pool.query(sqlMembers, (err, members) => {
+            //console.log(sqlMembers);
+
+            pool.query(`SELECT * FROM projects where projectid = ${id}`, (err, projectData) => {
+                if (err) return res.send(err)
+                res.render('projects/project_detail_page_overview', {
+                    members: members.rows,
+                    project: projectData.rows[0]
+                })
+            })
+        })
     })
 
-    // ================================ MEMBER ================================ //
+    // ================================ PROJECT DETAIL MEMBER ================================ //
     router.get('/:id/member', helpers.loggedIn, function (req, res, next) {
-        const url = req.query.page ? req.url : '/?page=1';
+        let id = req.params.id;
+        const url = req.query.page ? req.url : `/${id}/member/?page=1`;
         const page = req.query.page || 1;
-        const limit = 5;
+        const limit = 2;
         const offset = (page - 1) * limit
         let searching = false;
         let params = [];
@@ -276,25 +291,33 @@ module.exports = function (pool) {
             searching = true;
         }
 
-        if (req.query.checkmember && req.query.member) {
+        if (req.query.checkposition && req.query.member) {
             params.push(`CONCAT(users.firstname,' ',users.lastname) = '${req.query.member}'`);
             searching = true;
         }
 
         // untuk menghitung jumlah data
-        let sql = `select count(id) as total from (select distinct projects.projectid as id from projects
-                LEFT JOIN members ON projects.projectid = members.projectid
-                LEFT JOIN users ON members.userid = users.userid`
+        let sql = `SELECT COUNT (members.id) AS total
+        FROM members
+        INNER JOIN projects ON members.projectid = projects.projectid
+        INNER JOIN users ON members.userid = users.userid
+        WHERE projects.projectid = ${req.params.id}`
+
+        console.log(sql);
+        
 
         if (searching) {
             sql += ` where ${params.join(' AND ')}`
         }
 
-        sql += `) as project_member`;
-        console.log('count query', sql);
+        // sql += `) as project_member`;
+        //console.log('count query', sql);
 
         pool.query(sql, (err, data) => {
-            let id = req.params.id;
+
+            console.log(data);
+            
+
             const totalPages = data.rows[0].total;
             const pages = Math.ceil(totalPages / limit)
 
@@ -304,7 +327,6 @@ module.exports = function (pool) {
                 LEFT JOIN users ON members.userid = users.userid`
 
             if (searching) {
-
                 sql += ` where ${params.join(' AND ')}`
             }
 
@@ -313,11 +335,12 @@ module.exports = function (pool) {
             // untuk membatasi query members berdasarkan project yang akan diolah saja
             let subquery = `select distinct projects.projectid from projects LEFT JOIN members ON projects.projectid = members.projectid
             LEFT JOIN users ON members.userid = users.userid`
+
             if (searching) {
                 subquery += ` where ${params.join(' AND ')}`
             }
 
-            subquery += ` ORDER BY projectid LIMIT ${limit} OFFSET ${offset}`
+            //subquery += ` ORDER BY projectid LIMIT ${limit} OFFSET ${offset}`
             //console.log("project list", subquery);
 
             // mendapatkan data member berdasarkan project
@@ -325,31 +348,69 @@ module.exports = function (pool) {
             FROM members
             INNER JOIN projects ON members.projectid = projects.projectid
             INNER JOIN users ON members.userid = users.userid
-            WHERE projects.projectid = 33`;
+            WHERE projects.projectid = ${req.params.id} LIMIT ${limit} OFFSET ${offset}`;
+
             console.log("load members", sqlMembers);
 
             pool.query(sqlMembers, (err, memberData) => {
-console.log(memberData);
+
+                pool.query(`SELECT optiondetail -> 'option1' AS o1, optiondetail -> 'option2' AS o2, optiondetail -> 'option3' AS o3 FROM users where userid = ${req.session.user}`, (err, opsi) => {
 
 
-                res.render('projects/project_detail_page_members', {
-                    data: memberData.rows,
-                    // users: usersData.rows,
-                    pagination: {
-                        pages,
-                        page,
-                        totalPages,
-                        url
-                    },
-                    query: req.query,
-                    // columnOne,
-                    // columnTwo,
-                    // columnThree
+                    //console.log('wkwkwkwkwk', opsi);
+
+                    let columnOne = opsi.rows[0].o1;
+                    let columnTwo = opsi.rows[0].o2;
+                    let columnThree = opsi.rows[0].o3;
+                    console.log(columnOne, columnTwo, columnThree);
+                    //console.log(memberData.rows);
+
+
+                    res.render('projects/project_detail_page_members', {
+                        data: memberData.rows,
+                        //users: usersData.rows,
+                        pagination: {
+                            pages,
+                            page,
+                            totalPages,
+                            url
+                        },
+                        query: req.query,
+                        columnOne,
+                        columnTwo,
+                        columnThree,
+                        projectid: req.params.id
+                    })
                 })
             })
 
         })
     })
 
+    router.post('/:id/member', (req, res) => {
+
+        let option1 = false;
+        let option2 = false;
+        let option3 = false;
+
+        if (req.body.checkid) {
+            option1 = true;
+        }
+        if (req.body.checkname) {
+            option2 = true;
+        }
+        if (req.body.checkmember) {
+            option3 = true;
+        }
+        let sql = `UPDATE users SET optiondetail = optiondetail::jsonb || '{"option1" : ${option1}, "option2" : ${option2}, "option3" : ${option3}}' WHERE userid = ${req.session.user}`
+        //console.log(sql);
+
+        pool.query(sql, (err) => {
+            if (err) {
+                console.log(err);
+            }
+            res.redirect(`/projects/${req.params.id}/member`)
+        })
+    })
     return router;
 }
