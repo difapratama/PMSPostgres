@@ -5,6 +5,8 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var session = require('express-session');
 var flash = require('connect-flash');
+const fileUpload = require('express-fileupload');
+
 
 // ===============================================
 
@@ -12,7 +14,7 @@ var flash = require('connect-flash');
 
 // ===============================================
 
-const {Pool} = require ('pg')
+const { Pool } = require('pg')
 
 const pool = new Pool({
   user: 'postgres',
@@ -24,9 +26,7 @@ const pool = new Pool({
 
 var indexRouter = require('./routes/index')(pool);
 var projectsRouter = require('./routes/projects')(pool);
-var profilRouter = require('./routes/profil')(pool);
-var issuesRouter = require('./routes/issues')(pool);
-
+var profileRouter = require('./routes/profile')(pool);
 var app = express();
 
 // view engine setup
@@ -43,8 +43,9 @@ app.use(session({
 }));
 
 app.use(flash());
+app.use(fileUpload());
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
   res.header('Expires', '-1');
   res.header('Pragma', 'no-cache');
@@ -53,16 +54,15 @@ app.use(function(req, res, next) {
 
 app.use('/', indexRouter);
 app.use('/projects', projectsRouter);
-app.use('/profil', profilRouter);
-app.use('/issues', issuesRouter);
+app.use('/profile', profileRouter);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};

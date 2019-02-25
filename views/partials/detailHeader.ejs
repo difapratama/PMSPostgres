@@ -20,10 +20,11 @@
   <link href="../../../../dist/css/bootstrap.min.css" rel="stylesheet">
 
   <!-- Custom styles for this template -->
-  <link href="dashboard.css" rel="stylesheet">
+  <!-- <link href="dashboard.css" rel="stylesheet"> -->
 </head>
 
 <body>
+  
   <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
     <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Project Management System</a>
     <!-- <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search"> -->
@@ -53,80 +54,29 @@
             </li>
             <hr class="my-2 bg-dark">
             <li class="nav-item">
-              <a class="nav-link active" href="projects/project_detail_page_overview">
+              <a class="nav-link<%= identity == 'overview' ? ' active' : '' %>" href="/projects/overview/<%= projectid %>">
                 <span data-feather="home"></span>
-                Overview <span class="sr-only">(current)</span>
+                Overview <%- identity == 'overview' ? ' <span class="sr-only">(current)</span>' : '' %>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">
+              <a class="nav-link<%= identity == 'activity' ? ' active' : '' %>" href="/projects/activity/<%= projectid %>">
                 <span data-feather="file"></span>
-                Activity
+                Activity <%- identity == 'activity' ? ' <span class="sr-only">(current)</span>' : '' %>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="member">
+              <a class="nav-link<%= identity == 'members' ? ' active' : '' %>" href="/projects/members/<%= projectid %>">
                 <span data-feather="users"></span>
-                Member
+                Member <%- identity == 'members' ? ' <span class="sr-only">(current)</span>' : '' %>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">
+              <a class="nav-link<%= identity == 'issues' ? ' active' : '' %>" href="/projects/issues/<%= projectid %>">
                 <span data-feather="help-circle"></span>
-                Issues
+                Issues <%- identity == 'issues' ? ' <span class="sr-only">(current)</span>' : '' %>
               </a>
             </li>
           </ul>
         </div>
       </nav>
-
-      <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
-        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-          <h1 class="h2"><strong>Overview</strong></h1>
-          <div class="btn-toolbar mb-2 mb-md-0">
-            <div class="btn-group mr-2">
-              <button class="btn btn-sm btn-outline-secondary">Share</button>
-              <button class="btn btn-sm btn-outline-secondary">Export</button>
-            </div>
-            <button class="btn btn-sm btn-outline-secondary dropdown-toggle">
-              <span data-feather="calendar"></span>
-              This week
-            </button>
-          </div>
-        </div>
-        <h3><strong>Library System</strong></h3>
-        <div class="card">
-          <div class="card-body">
-            <strong>Issue Tracking</strong>
-            <ul>
-              <li>Bug</li>
-              <li>Feature</li>
-              <li>Support</li>
-            </ul>
-          </div>
-        </div>
-        <br>
-        <div class="card">
-          <div class="card-body">
-            <strong>Members</strong>
-
-            <ul>
-              <% for (i = 0; i < members.length; i++) { %>
-              <li><%= members[i].fullname %></li>
-              <% } %>
-            </ul>
-          </div>
-        </div>
-    </div>
-    </main>
-  </div>
-
-  <!-- Icons -->
-  <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
-  <script>
-    feather.replace()
-  </script>
-
-</body>
-
-</html>

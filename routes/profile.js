@@ -11,7 +11,7 @@ module.exports = function (pool) {
             if (err) {
                 console.log(err);
             }
-            res.render('profil', { data: data.rows[0] })
+            res.render('profile/view', { data: data.rows[0] })
         })
     })
 
@@ -27,7 +27,7 @@ module.exports = function (pool) {
             if (err) {
                 console.log(err);
             }
-            res.redirect('/profil')
+            res.redirect('/profile/view')
         })
     })
 

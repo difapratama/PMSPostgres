@@ -4,5 +4,6 @@ module.exports = {
       return res.redirect('/');
     }
     next()
-  }
+  },
+  positionEnum: ["Manager", "Software Developers", "Quality Assurance", "Software Engineer"]
 }
