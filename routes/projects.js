@@ -13,6 +13,7 @@ module.exports = function (pool) {
         const offset = (page - 1) * limit
         let searching = false;
         let params = [];
+        let status = req.session.status;
 
         if (req.query.checkid && req.query.formid) {
             params.push(`projects.projectid = ${req.query.formid}`);
@@ -103,7 +104,8 @@ module.exports = function (pool) {
                                 query: req.query,
                                 columnOne,
                                 columnTwo,
-                                columnThree
+                                columnThree,
+                                status
                             })
                         })
                     })

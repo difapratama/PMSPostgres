@@ -9,13 +9,15 @@ module.exports = function (pool) {
         pool.query(`SELECT * from users where userid = ${req.session.user}`, (err, data) => {
             //console.log(data.rows);
             if (err) {
+                console.log('aaaaaaaaaaaaaaaaaa', data);
+                
                 console.log(err);
             }
             res.render('profile/view', { data: data.rows[0] })
         })
     })
 
-    router.post('/update', (req, res, next) => {
+    router.post('/:id', (req, res, next) => {
         //console.log(req.body);
         
         let password = req.body.formpass;
@@ -27,7 +29,7 @@ module.exports = function (pool) {
             if (err) {
                 console.log(err);
             }
-            res.redirect('/profile/view')
+            res.redirect('/profile')
         })
     })
 

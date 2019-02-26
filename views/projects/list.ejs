@@ -120,8 +120,9 @@
                     <td class="Actions">
                         <a href="/projects/edit/<%= item.projectid %>" class="btn btn-success"
                             style="margin:5px;">Edit</a>
-                        <a href="/projects/delete/<%= item.projectid %>" class="btn btn-danger" style="margin:5px;"
-                            onclick="return confirm('Yakin bro?');">Delete</a>
+                        <% if(status == 'admin') { %> <a href="/projects/delete/<%= item.projectid %>"
+                            class="btn btn-danger" style="margin:5px;"
+                            onclick="return confirm('Yakin bro?');">Delete</a> <% } %>
                     </td>
                 </tr>
                 <% }); %>
